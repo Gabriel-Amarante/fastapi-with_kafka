@@ -1,4 +1,8 @@
+PROJECT FORKED FROM https://github.com/GavriloviciEduard/fastapi-kafka 
+to study only
+
 #  Kafka PoC using FastAPI 
+
 Both the producer and the consumer wait for Kafka to accept connections using kafkacat.
 ## Run and test
 
