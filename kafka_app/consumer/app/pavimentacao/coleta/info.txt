@@ -1,0 +1,1 @@
+Arquivos utilizados para a coleta das imagens do StreetView e do Google/Bing images, conforme detalhado no entregável F05.10.
