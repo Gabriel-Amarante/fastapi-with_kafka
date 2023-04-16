@@ -45,23 +45,40 @@ async def consume():
     while True:
         async for msg in consumer:
             image_url = await decompress(msg.value)
-            # print(
-            #     "consumed: ",
-            #     f"topic: {msg.topic},",
-            #     f"partition: {msg.partition},",
-            #     f"offset: {msg.offset},",
-            #     f"key: {msg.key},",
-            #     f"value: {image_url},",
-            #     f"timestamp: {msg.timestamp}",
-            # )
+
             response = requests.get(image_url)
             if not os.path.exists("./images"):
                 os.makedirs("./images")
-            with open(f"./images/to_predict_{image_url[10:20]}.jpg", "wb") as f:
+
+            mypath = "./images/to_predict_"+image_url[10:20]+".jpg"
+            with open(mypath, "wb") as f:
                 f.write(response.content)
+
             print(os.listdir("./images/"))
 
-            msg = "Classe 1"
+            os.system("pwd")
+            print(os.listdir())
+
+            os.chdir("app/obras")
+
+            os.system("python3 Framework.py --path " + mypath + "  --single_folder True")
+
+#            #retornar arquivo csv
+            f = open(mypath + "predictions.csv","r")
+            classes = f.read()
+#            f1 = open(mypath + "predictions_final.csv","r")
+#            details = f1.read()
+#
+#            #remover pasta com dados anteriores
+#            shutil.rmtree(mypath)
+#
+#            #voltar diretorio padrão e retornar predições
+#
+#            print(os.listdir("./images/"))
+#
+            msg = classes
+
+#            msg = "Classe 1"
 
 
 @app.on_event("startup")
@@ -79,3 +96,4 @@ async def shutdown_event():
 
     log.info("Shutting down...")
     await consumer.stop()
+
