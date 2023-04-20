@@ -1,5 +1,5 @@
 import logging
-
+import random
 import brotli
 from aiokafka import AIOKafkaConsumer
 from fastapi import FastAPI
@@ -14,7 +14,6 @@ log = logging.getLogger("uvicorn")
 
 def create_application() -> FastAPI:
     """Create FastAPI application and set routes.
-
     Returns:
         FastAPI: The created FastAPI instance.
     """
@@ -46,39 +45,27 @@ async def consume():
         async for msg in consumer:
             image_url = await decompress(msg.value)
 
+            os.chdir("./app/obras")
+            
             response = requests.get(image_url)
-            if not os.path.exists("./images"):
-                os.makedirs("./images")
+            folder = "./images/"+str(random.randint(0,10000))
+            if not os.path.exists(folder):
+                os.makedirs(folder)
 
-            mypath = "./images/to_predict_"+image_url[10:20]+".jpg"
+            mypath = folder + "/to_predict_"+image_url[10:20]+".jpg"
             with open(mypath, "wb") as f:
                 f.write(response.content)
 
-            print(os.listdir("./images/"))
+            os.system("python3 Framework.py --path " + folder + "  --single_folder True")
 
-            os.system("pwd")
-            print(os.listdir())
-
-            os.chdir("app/obras")
-
-            os.system("python3 Framework.py --path " + mypath + "  --single_folder True")
-
-#            #retornar arquivo csv
-            f = open(mypath + "predictions.csv","r")
+            #retornar arquivo csv
+            f = open(folder + "/" + "predictions.csv","r")
             classes = f.read()
-#            f1 = open(mypath + "predictions_final.csv","r")
-#            details = f1.read()
-#
-#            #remover pasta com dados anteriores
-#            shutil.rmtree(mypath)
-#
-#            #voltar diretorio padrão e retornar predições
-#
-#            print(os.listdir("./images/"))
-#
+
+            #shutil.rmtree(folder)
+            print(classes)
             msg = classes
 
-#            msg = "Classe 1"
 
 
 @app.on_event("startup")
@@ -96,4 +83,3 @@ async def shutdown_event():
 
     log.info("Shutting down...")
     await consumer.stop()
-
