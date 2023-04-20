@@ -46,6 +46,9 @@ async def consume():
             image_url = await decompress(msg.value)
 
             os.chdir("./app/obras")
+
+            if not os.path.exists("./images"):
+                os.makedirs("./images")
             
             response = requests.get(image_url)
             folder = "./images/"+str(random.randint(0,10000))
