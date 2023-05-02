@@ -23,5 +23,8 @@ RUN pip install -r requirements.txt --no-cache-dir
 COPY ./entrypoint.sh .
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-# run entrypoint.sh
-ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
+ENV KAFKA_HOST kafka
+ENV KAFKA_PORT 9092
+ENV KAFKA_TOPICS jobs
+
+ENTRYPOINT ["sh", "-c","uvicorn app.main:app --host=0.0.0.0 --port=8000  --reload"]
