@@ -47,7 +47,8 @@ RUN pip install "uvicorn[standard]"
 RUN pip install python-multipart
 #RUN wget https://github.com/MPMG-DCC-UFMG/F05/archive/refs/heads/master.zip && unzip master.zip
 
+ENV KAFKA_HOST kafka
+ENV KAFKA_PORT 9092
+ENV KAFKA_TOPICS jobs
 
-# run entrypoint.sh
-ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
-
+ENTRYPOINT ["sh", "-c","uvicorn app.main:app --host=0.0.0.0 --port=8000  --reload"]
