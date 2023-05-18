@@ -19,8 +19,8 @@ async def compress(message: str) -> bytes:
 
 
 @router.post("/")
-async def produce_message(message: str = Query(...)) -> dict:
-    return await producer.send_and_wait("jobs", await compress(message))
+async def produce_message(id: str, message: str = Query(...)) -> dict:
+    return await producer.send_and_wait("jobs", await compress(id+" "+message))
 
 
 def create_application() -> FastAPI:
