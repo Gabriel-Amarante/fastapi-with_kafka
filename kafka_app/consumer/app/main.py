@@ -1,6 +1,9 @@
 import logging
 import random
 import brotli
+import requests
+import json
+import shutil
 from aiokafka import AIOKafkaConsumer
 from fastapi import FastAPI
 
@@ -39,25 +42,51 @@ async def decompress(file_bytes: bytes) -> str:
         get_settings().file_encoding,
     )
 
+def convertToJSON(predictions):
+    # Separando as linhas do texto
+    lines = predictions.strip().split('\n')
+
+    # Obtendo os nomes das colunas a partir da primeira linha
+    columns = lines[0].split(',')
+
+    # Inicializando a lista para armazenar os registros
+    records = []
+
+    # Percorrendo as linhas de dados (exceto a primeira)
+    for line in lines[1:]:
+        values = line.split(',')
+        record = dict(zip(columns, values))
+        records.append(record)
+
+    # Convertendo para JSON
+    json_data = json.dumps(records)
+
+    return json_data
 
 async def consume():
     while True:
         async for msg in consumer:
-            image_url = await decompress(msg.value)
+            id_urls = await decompress(msg.value)
+            id_urls=id_urls.split(" ")
+            id=id_urls[0]
+            urls=id_urls[1:]
+            responses=[]
+            for url in urls:
+                responses.append(requests.get(url))
 
             os.chdir("./app/obras")
 
             if not os.path.exists("./images"):
                 os.makedirs("./images")
             
-            response = requests.get(image_url)
             folder = "./images/"+str(random.randint(0,10000))
             if not os.path.exists(folder):
                 os.makedirs(folder)
 
-            mypath = folder + "/to_predict_"+image_url[10:20]+".jpg"
-            with open(mypath, "wb") as f:
-                f.write(response.content)
+            for i in range(len(responses)):
+                mypath = folder + "/to_predict_" + url[i][10:20] +".jpg"
+                with open(mypath, "wb") as f:
+                    f.write(responses[i].content)
 
             os.system("python3 Framework.py --path " + folder + "  --single_folder True")
 
@@ -65,10 +94,14 @@ async def consume():
             f = open(folder + "/" + "predictions.csv","r")
             classes = f.read()
 
-            #shutil.rmtree(folder)
-            print(classes)
-            msg = classes
+            #print(classes)
+            msg = convertToJSON(classes)
+            #apagar pasta
+            shutil.rmtree(folder)
 
+            #enviar msg para backend
+            #BACKEND_END_VAR/publicworks/update
+            #r= requests.post(os.getenv("BACKEND_END_VAR")+"/publicworks/update",data=msg)
 
 
 @app.on_event("startup")
