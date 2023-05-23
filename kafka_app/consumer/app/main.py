@@ -100,8 +100,13 @@ async def consume():
             shutil.rmtree(folder)
 
             #enviar msg para backend
-            #BACKEND_END_VAR/publicworks/update
-            #r= requests.post(os.getenv("BACKEND_END_VAR")+"/publicworks/update",data=msg)
+            try:
+                requests.patch(
+                    "{BACKEND_URL}/collects/analytics/update/{COLLECT_ID}?public_work_rnn_status={STATUS}",
+                    headers={"X-TRENA-KEY": API_KEY},
+                    verify=False,)
+            except Exception as e:
+                print("WARN:     Não atualizar o status do modelo para a coleta")
 
 
 @app.on_event("startup")
