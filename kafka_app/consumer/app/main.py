@@ -101,9 +101,10 @@ async def consume():
 
             #enviar msg para backend
             try:
+                os.getenv(BACKEND_URL)
                 requests.patch(
-                    "{BACKEND_URL}/collects/analytics/update/{COLLECT_ID}?public_work_rnn_status={STATUS}",
-                    headers={"X-TRENA-KEY": API_KEY},
+                    os.getenv('BACKEND_URL')+'/collects/analytics/update/'+os.getenv('COLLECT_ID')+'?public_work_rnn_status='+os.getenv('STATUS'),
+                    headers={"X-TRENA-KEY": os.getenv('API_KEY')},
                     verify=False,)
             except Exception as e:
                 print("WARN:     Não atualizar o status do modelo para a coleta")

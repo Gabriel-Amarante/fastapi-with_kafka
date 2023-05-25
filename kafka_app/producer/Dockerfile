@@ -5,8 +5,8 @@ FROM python:3.7.12-slim-buster
 WORKDIR /usr/src/app
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# ENV PYTHONDONTWRITEBYTECODE 1
+# ENV PYTHONUNBUFFERED 1
 
 # install system dependencies
 RUN apt-get update \
@@ -23,8 +23,8 @@ RUN pip install -r requirements.txt --no-cache-dir
 COPY ./entrypoint.sh .
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-ENV KAFKA_HOST kafka
-ENV KAFKA_PORT 9092
-ENV KAFKA_TOPICS jobs
+# ENV KAFKA_HOST kafka
+# ENV KAFKA_PORT 9092
+# ENV KAFKA_TOPICS jobs
 
 ENTRYPOINT ["sh", "-c","uvicorn app.main:app --host=0.0.0.0 --port=8000  --reload"]
