@@ -28,7 +28,7 @@ def create_consumer() -> AIOKafkaConsumer:
 
     return AIOKafkaConsumer(
         get_settings().kafka_topics,
-        bootstrap_servers=get_settings().kafka_instance,
+        bootstrap_servers=get_settings().kafka_bootstrap_servers.split(','),
     )
 
 

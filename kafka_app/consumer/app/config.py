@@ -1,6 +1,7 @@
 import logging
 import os
 from functools import lru_cache
+from typing import List
 
 from pydantic import BaseSettings
 
@@ -15,6 +16,7 @@ class Settings(BaseSettings):
     kafka_topics: str = os.getenv("KAFKA_TOPICS")
     kafka_instance = f"{kafka_host}:{kafka_port}"
     file_encoding: str = "utf-8"
+    kafka_bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
 
 
 @lru_cache()

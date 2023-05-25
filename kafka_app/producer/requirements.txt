@@ -5,3 +5,4 @@ uvicorn==0.14.0
 aiokafka
 kafka-python
 brotli
+typing
