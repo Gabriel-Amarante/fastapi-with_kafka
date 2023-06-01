@@ -1,0 +1,7 @@
+Terreno: 0 -> 0.817539
+Infraestrutura: 0 -> 0.887816
+Vedacao Vertical: 0 -> 0.692346
+Coberturas: 0 -> 0.996890
+Esquadrias: 0 -> 0.989296
+Revestimentos: 1 -> 0.919388
+Paisagismo: 0 -> 0.997800

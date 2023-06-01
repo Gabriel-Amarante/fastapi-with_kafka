@@ -59,9 +59,27 @@ def convertToJSON(predictions):
         records.append(record)
 
     # Convertendo para JSON
-    json_data = json.dumps(records)
+    json_data = json.loads(json.dumps(records))
 
     return json_data
+
+def findClasse(msg):
+    classes = {
+        "Outros": "0",
+        "Obra nao iniciada (terreno)": "1",
+        "Infra-estrutura": "2",
+        "Vedacao vertical": "3",
+        "Coberturas": "4",
+        "Esquadrias": "5",
+        "Revestimentos externos": "6",
+        "Pisos externos e paisagismo": "7",    
+    }
+
+    for key, value in msg.items():
+        if value == "1":
+            return classes[key]
+    return "0"
+    
 
 async def consume():
     while True:
@@ -74,7 +92,8 @@ async def consume():
             for url in urls:
                 responses.append(requests.get(url))
 
-            os.chdir("./app/obras")
+            if os.path.exists("./app/obras"):
+                os.chdir("./app/obras")
 
             if not os.path.exists("./images"):
                 os.makedirs("./images")
@@ -94,16 +113,17 @@ async def consume():
             f = open(folder + "/" + "predictions.csv","r")
             classes = f.read()
 
-            #print(classes)
             msg = convertToJSON(classes)
             #apagar pasta
             shutil.rmtree(folder)
-
+            status = findClasse(msg[0])
             #enviar msg para backend
             try:
                 os.getenv(BACKEND_URL)
                 requests.patch(
-                    os.getenv('BACKEND_URL')+'/collects/analytics/update/'+os.getenv('COLLECT_ID')+'?public_work_rnn_status='+os.getenv('STATUS'),
+                    #status deve ser a previsao
+                    #id vai ser o da requisiçao 
+                    os.getenv('BACKEND_URL')+'/collects/analytics/update/'+id+'?public_work_rnn_status='+status,
                     headers={"X-TRENA-KEY": os.getenv('API_KEY')},
                     verify=False,)
             except Exception as e:
