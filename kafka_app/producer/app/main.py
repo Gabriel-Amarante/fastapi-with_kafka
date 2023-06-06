@@ -37,7 +37,6 @@ def create_application() -> FastAPI:
 
 def create_producer() -> AIOKafkaProducer:
 
-    print(get_settings().kafka_bootstrap_servers)
     return AIOKafkaProducer(
         bootstrap_servers=get_settings().kafka_bootstrap_servers.split(','),
     )

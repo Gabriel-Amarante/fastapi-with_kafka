@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     kafka_host: str = os.getenv("KAFKA_HOST")
     kafka_port: str = os.getenv("KAFKA_PORT")
     kafka_topics: str = os.getenv("KAFKA_TOPICS")
+    #retirar kafka_instance
     kafka_instance = f"{kafka_host}:{kafka_port}"
     kafka_bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
 

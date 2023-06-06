@@ -11,12 +11,14 @@ log = logging.getLogger("uvicorn")
 class Settings(BaseSettings):
     """Class for storing settings."""
 
-    kafka_host: str = os.getenv("KAFKA_HOST")
-    kafka_port: str = os.getenv("KAFKA_PORT")
+    # OBS: Remover os comentários
+    # kafka_host: str = os.getenv("KAFKA_HOST")
+    # kafka_port: str = os.getenv("KAFKA_PORT")
     kafka_topics: str = os.getenv("KAFKA_TOPICS")
-    kafka_instance = f"{kafka_host}:{kafka_port}"
+    # kafka_instance = f"{kafka_host}:{kafka_port}"
     file_encoding: str = "utf-8"
     kafka_bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
+    app_api_token: str = os.getenv("APP_API_TOKEN")
 
 
 @lru_cache()

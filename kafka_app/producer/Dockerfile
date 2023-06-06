@@ -8,6 +8,7 @@ WORKDIR /usr/src/app
 # ENV PYTHONDONTWRITEBYTECODE 1
 # ENV PYTHONUNBUFFERED 1
 
+
 # install system dependencies
 RUN apt-get update \
     && apt-get -y install kafkacat \
@@ -26,5 +27,6 @@ RUN chmod +x /usr/src/app/entrypoint.sh
 # ENV KAFKA_HOST kafka
 # ENV KAFKA_PORT 9092
 # ENV KAFKA_TOPICS jobs
+# ENV APP_API_TOKEN
 
 ENTRYPOINT ["sh", "-c","uvicorn app.main:app --host=0.0.0.0 --port=8000  --reload"]

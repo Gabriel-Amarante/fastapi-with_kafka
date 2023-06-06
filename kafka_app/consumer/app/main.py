@@ -119,12 +119,15 @@ async def consume():
             status = findClasse(msg[0])
             #enviar msg para backend
             try:
-                os.getenv(BACKEND_URL)
+                header ={"X-TRENA-KEY": os.getenv('API_KEY')}
+                if os.getenv('APP_API_TOKEN') !="":
+                    header['Authorization'] = 'Bearer ' + str(os.getenv('APP_API_TOKEN'))
+
                 requests.patch(
                     #status deve ser a previsao
                     #id vai ser o da requisiçao 
                     os.getenv('BACKEND_URL')+'/collects/analytics/update/'+id+'?public_work_rnn_status='+status,
-                    headers={"X-TRENA-KEY": os.getenv('API_KEY')},
+                    headers=header,
                     verify=False,)
             except Exception as e:
                 print("WARN:     Não atualizar o status do modelo para a coleta")
